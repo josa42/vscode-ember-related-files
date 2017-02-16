@@ -2,104 +2,39 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode'
+import * as fs from 'fs'
 import { dirname, join, basename } from 'path'
+
+const groups = [
+  ['component-js', 'component-hbs', 'component-scss'],
+  ['controller-js', 'controller-hbs', 'route-js']
+]
+
+const types = [
+  { key: 'component-js', ext: 'js', exp: /^app\/components\/(.+)\.js$/ },
+  { key: 'component-hbs', ext: 'hbs', exp: /^app\/templates\/components\/(.+)\.hbs$/ },
+  { key: 'route-js', ext: 'js', exp: /^app\/routes\/(.+)\.js$/ },
+  { key: 'controller-js', ext: 'js', exp: /^app\/controllers\/(.+)\.js$/ },
+  { key: 'controller-hbs', ext: 'hbs', exp: /^app\/templates\/(.+)\.hbs$/ },
+]
 
 function detectType(path): IType {
 
-  let m
-
-  m = path.match(/^app\/components\/(.+)\.js$/)
-  if (m) {
-    return {
-      key: 'component-js',
-      path,
-      name: `${m[1]} JS`,
-      part: m[1]
-    }
-  }
-
-  m = path.match(/^app\/routes\/(.+)\.js$/)
-  if (m) {
-    return {
-      key: 'route-js',
-      path,
-      name: `${m[1]} JS`,
-      part: m[1]
-    }
-  }
-
-  m = path.match(/^app\/controllers\/(.+)\.js$/)
-  if (m) {
-    return {
-      key: 'controller-js',
-      path,
-      name: `${m[1]} JS`,
-      part: m[1]
-    }
-  }
-
-  m = path.match(/^app\/templates\/components\/(.+)\.hbs$/)
-  if (m) {
-    return {
-      key: 'component-hbs',
-      path,
-      name: `${m[1]} HBS`,
-      part: m[1]
-    }
-  }
-
-  m = path.match(/^app\/templates\/(.+)\.hbs$/)
-  if (m) {
-    return {
-      key: 'controller-hbs',
-      path,
-      name: `${m[1]} HBS`,
-      part: m[1]
-    }
-  }
+  return types
+    .map((type) => {
+      const { key, ext, exp} = type
+      const m = path.match(exp)
+      if (m) {
+        return { key, path, name: `${m[1]} ${ext.toUpperCase()}`, part: m[1]}
+      }
+    })
+    .find((type) => Boolean(type))
 }
 
 function getRelatedTypeKeys(type): string[] {
-  switch (type.key) {
-
-    case 'component-js':
-      return [
-        'component-hbs',
-        'component-scss'
-      ]
-
-    case 'component-hbs':
-      return [
-        'component-js',
-        'component-scss'
-      ]
-
-    case 'component-scss':
-      return [
-        'component-js',
-        'component-hbs'
-      ]
-
-    case 'route-js':
-      return [
-        'controller-js',
-        'controller-hbs'
-      ]
-
-    case 'controller-js':
-      return [
-        'controller-hbs',
-        'route-js'
-      ]
-
-    case 'controller-hbs':
-      return [
-        'controller-js',
-        'route-js'
-      ]
-  }
-
-  return []
+  return groups
+    .find((group) => group.indexOf(type.key) !== -1)
+    .filter((key) => key !== type.key);
 }
 
 function getPath(sourceType, typeKey): string {
@@ -128,6 +63,26 @@ function getPath(sourceType, typeKey): string {
   }
 }
 
+function typeKeyToLabel(typeKey: string) : string {
+  switch (typeKey) {
+    case 'component-js':
+      return 'Component'
+
+    case 'component-scss':
+      return 'Stylesheet'
+
+    case 'route-js':
+      return 'Route'
+
+    case 'controller-js':
+      return 'Controller'
+
+    case 'component-hbs':
+    case 'controller-hbs':
+      return 'Template'
+  }
+}
+
 interface IType {
   key: string,
   path: string,
@@ -153,8 +108,20 @@ class TypeItem implements vscode.QuickPickItem {
   detail?: string
 
   constructor(sourceType: IType, typeKey: string) {
-    this.label = typeKey
+    this.label = typeKeyToLabel(typeKey)
     this.description = getPath(sourceType, typeKey)
+  }
+
+  public path() : string {
+    return join(vscode.workspace.rootPath, this.description)
+  }
+
+  public uri() : vscode.Uri {
+    return vscode.Uri.parse(`file://${this.path()}`)
+  }
+
+  public exists() : boolean {
+    return fs.existsSync(this.path())
   }
 }
 
@@ -169,11 +136,12 @@ export function activate(context: vscode.ExtensionContext) {
       return
     }
 
-    var relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName)
+    let relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName)
 
     const type = detectType(relativeFileName)
-
-    const items = getRelatedTypeKeys(type).map((typeKey) => new TypeItem(type, typeKey))
+    const items = getRelatedTypeKeys(type)
+      .map((typeKey) => new TypeItem(type, typeKey))
+      .filter((type) => type.exists())
 
     vscode.window.showQuickPick(items, { placeHolder: "Select File", matchOnDetail: true }).then((item) => {
       if (!item) return
