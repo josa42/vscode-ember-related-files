@@ -6,18 +6,36 @@ import * as fs from 'fs'
 import { dirname, join, basename } from 'path'
 
 const groups = [
-  ['component-js', 'component-hbs', 'component-scss'],
-  ['controller-js', 'controller-hbs', 'route-js']
+  ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js'],
+  ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unitjs', 'route-integration-js']
 ]
 
 const types = [
-  { module: 'component',  exp: /^(app|addon)\/components\/(.+)\.(js)$/ },
-  { module: 'component',  exp: /^(app|addon)\/templates\/components\/(.+)\.(hbs)$/ },
-  { module: 'component',  exp: /^(app|addon)\/styles\/components\/(.+)\.(scss)$/ },
-  { module: 'route',      exp: /^(app|addon)\/routes\/(.+)\.(js)$/ },
-  { module: 'controller', exp: /^(app|addon)\/controllers\/(.+)\.(js)$/ },
-  { module: 'controller', exp: /^(app|addon)\/templates\/(.+)\.(hbs)$/ },
+  { module: 'component',              exp: /^(app|addon)\/components\/(.+)\.(js)$/ },
+  { module: 'component-template',     exp: /^(app|addon)\/templates\/components\/(.+)\.(hbs)$/ },
+  { module: 'component-style',        exp: /^(app|addon)\/styles\/components\/(.+)\.(scss)$/ },
+  { module: 'component-unit',         exp: /^()tests\/unit\/components\/(.+)-test\.(js)$/ },
+  { module: 'component-integration',  exp: /^()tests\/integration\/components\/(.+)-test\.(js)$/ },
+  { module: 'route',                  exp: /^(app|addon)\/routes\/(.+)\.(js)$/ },
+  { module: 'route-unit',             exp: /^()tests\/unit\/routes\/(.+)-test\.(js)$/ },
+  { module: 'route-integration',      exp: /^()tests\/integration\/routes-test\/(.+)\.(js)$/ },
+  { module: 'controller',             exp: /^(app|addon)\/controllers\/(.+)\.(js)$/ },
+  { module: 'controller-unit',        exp: /^()tests\/unit\/controllers\/(.+)-test\.(js)$/ },
+  { module: 'controller-integration', exp: /^()tests\/integration\/controllers\/(.+)-test\.(js)$/ },
+  { module: 'controller-template',    exp: /^(app|addon)\/templates\/(.+)\.(hbs)$/ },
 ]
+
+const HOST_TYPE_CACHE = {};
+
+function detectHostType() {
+
+  const hostPath = vscode.workspace.rootPath
+  if (!HOST_TYPE_CACHE[hostPath]) {
+    HOST_TYPE_CACHE[hostPath] = fs.existsSync(join(vscode.workspace.rootPath, 'addon')) ? 'addon' : 'app'
+  }
+
+  return HOST_TYPE_CACHE[hostPath];
+}
 
 function detectType(path): IType {
 
@@ -27,7 +45,7 @@ function detectType(path): IType {
       const m = path.match(exp)
       
       if (m) {
-        const hostType = m[1]
+        const hostType = m[1] || detectHostType()
         const part = m[2]
         const ext = m[3]
         
@@ -39,33 +57,41 @@ function detectType(path): IType {
 
 function getRelatedTypeKeys(type: IType): string[] {
     return groups
-    .find((group) => group.indexOf(type.key) !== -1)
-    .filter((key) => key !== type.key);
+      .find((group) => group.indexOf(type.key) !== -1)
+      .filter((key) => key !== type.key);
 }
 
 function getPath(sourceType: IType, typeKey: string): string {
 
-  const {hostType, part } = sourceType
+  const { hostType, part } = sourceType
+  const [ , type, , subtype, ext ] = typeKey.match(/^([a-z]+)(-([a-z]+))?-([a-z]+)$/)
 
-  switch (typeKey) {
-    case 'component-js':
-      return `${hostType}/components/${part}.js`
+  let filePath, basePath;
 
-    case 'component-hbs':
-      return `${hostType}/templates/components/${part}.hbs`
-
-    case 'component-scss':
-      return `${hostType}/styles/components/${part}.scss`
-
-    case 'route-js':
-      return `${hostType}/routes/${part}.js`
-
-    case 'controller-js':
-      return `${hostType}/controllers/${part}.js`
-
-    case 'controller-hbs':
-      return `${hostType}/templates/${part}.hbs`
+  switch (subtype) {
+    case 'integration':
+    case 'unit':
+      basePath = `tests/${subtype}`
+      filePath = `${part}-test.${ext}`
+      break;
+    
+    case 'style':
+      basePath = `${hostType}/styles`
+      filePath = `${part}.${ext}`
+      break;
+    
+    case 'template':
+      basePath = `${hostType}/templates`
+      filePath = `${part}.${ext}`
+      break;
+  
+    default:
+      basePath = hostType
+      filePath = `${part}.${ext}`
+      break;
   }
+
+  return `${basePath}/${type}s/${filePath}`
 }
 
 function typeKeyToLabel(typeKey: string) : string {
@@ -73,7 +99,7 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'component-js':
       return 'Component'
 
-    case 'component-scss':
+    case 'component-style-scss':
       return 'Stylesheet'
 
     case 'route-js':
@@ -82,9 +108,19 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'controller-js':
       return 'Controller'
 
-    case 'component-hbs':
-    case 'controller-hbs':
+    case 'component-template-hbs':
+    case 'controller-template-hbs':
       return 'Template'
+    
+    case 'component-unit-js':
+    case 'route-unit-js':
+    case 'controller-unit-js':
+      return 'Unit Test'
+    
+    case 'component-integration-js':
+    case 'route-integration-js':
+    case 'controller-integration-js':
+      return 'Integration Test'
   }
 }
 
@@ -144,7 +180,6 @@ export function activate(context: vscode.ExtensionContext) {
     try {
       const relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName)
       const type = detectType(relativeFileName)
-     
       const items = getRelatedTypeKeys(type)
         .map((typeKey) => new TypeItem(type, typeKey))
         .filter((type) => type.exists())

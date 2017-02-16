@@ -1,7 +1,7 @@
-# Change Log
-All notable changes to the "ember-related-files" extension will be documented in this file.
+# Changelog
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## 0.2.0
+- Add support for tests
 
-## [Unreleased]
+## 0.1.0
 - Initial release
