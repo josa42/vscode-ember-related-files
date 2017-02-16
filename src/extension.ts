@@ -7,7 +7,8 @@ import { dirname, join, basename } from 'path'
 
 const groups = [
   ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js'],
-  ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unitjs', 'route-integration-js']
+  ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unitjs', 'route-integration-js'],
+  ['util-js', 'util-unit-js', 'util-integration-js']
 ]
 
 const types = [
@@ -23,6 +24,9 @@ const types = [
   { module: 'controller-unit',        exp: /^()tests\/unit\/controllers\/(.+)-test\.(js)$/ },
   { module: 'controller-integration', exp: /^()tests\/integration\/controllers\/(.+)-test\.(js)$/ },
   { module: 'controller-template',    exp: /^(app|addon)\/templates\/(.+)\.(hbs)$/ },
+  { module: 'util',                   exp: /^(app|addon)\/utils\/(.+)\.(js)$/ },
+  { module: 'util-unit',              exp: /^()tests\/unit\/utils\/(.+)-test\.(js)$/ },
+  { module: 'util-integration',       exp: /^()tests\/integration\/utils\/(.+)-test\.(js)$/ },
 ]
 
 const HOST_TYPE_CACHE = {};
@@ -107,6 +111,9 @@ function typeKeyToLabel(typeKey: string) : string {
 
     case 'controller-js':
       return 'Controller'
+    
+    case 'util-js':
+      return 'Util'
 
     case 'component-template-hbs':
     case 'controller-template-hbs':
@@ -115,11 +122,13 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'component-unit-js':
     case 'route-unit-js':
     case 'controller-unit-js':
+    case 'util-unit-js':
       return 'Unit Test'
     
     case 'component-integration-js':
     case 'route-integration-js':
     case 'controller-integration-js':
+    case 'util-integration-js':
       return 'Integration Test'
   }
 }
