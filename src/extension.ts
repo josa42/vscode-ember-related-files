@@ -11,55 +11,60 @@ const groups = [
 ]
 
 const types = [
-  { key: 'component-js', ext: 'js', exp: /^app\/components\/(.+)\.js$/ },
-  { key: 'component-hbs', ext: 'hbs', exp: /^app\/templates\/components\/(.+)\.hbs$/ },
-  { key: 'route-js', ext: 'js', exp: /^app\/routes\/(.+)\.js$/ },
-  { key: 'controller-js', ext: 'js', exp: /^app\/controllers\/(.+)\.js$/ },
-  { key: 'controller-hbs', ext: 'hbs', exp: /^app\/templates\/(.+)\.hbs$/ },
+  { module: 'component',  exp: /^(app|addon)\/components\/(.+)\.(js)$/ },
+  { module: 'component',  exp: /^(app|addon)\/templates\/components\/(.+)\.(hbs)$/ },
+  { module: 'component',  exp: /^(app|addon)\/styles\/components\/(.+)\.(scss)$/ },
+  { module: 'route',      exp: /^(app|addon)\/routes\/(.+)\.(js)$/ },
+  { module: 'controller', exp: /^(app|addon)\/controllers\/(.+)\.(js)$/ },
+  { module: 'controller', exp: /^(app|addon)\/templates\/(.+)\.(hbs)$/ },
 ]
 
 function detectType(path): IType {
 
   return types
     .map((type) => {
-      const { key, ext, exp} = type
+      const { module, exp} = type
       const m = path.match(exp)
+      
       if (m) {
-        return { key, path, name: `${m[1]} ${ext.toUpperCase()}`, part: m[1]}
+        const hostType = m[1]
+        const part = m[2]
+        const ext = m[3]
+        
+        return { hostType, path, part, key: `${module}-${ext}` }
       }
     })
     .find((type) => Boolean(type))
 }
 
-function getRelatedTypeKeys(type): string[] {
-  return groups
+function getRelatedTypeKeys(type: IType): string[] {
+    return groups
     .find((group) => group.indexOf(type.key) !== -1)
     .filter((key) => key !== type.key);
 }
 
-function getPath(sourceType, typeKey): string {
+function getPath(sourceType: IType, typeKey: string): string {
 
-  let basePath
-  let ext
+  const {hostType, part } = sourceType
 
   switch (typeKey) {
     case 'component-js':
-      return `app/components/${sourceType.part}.js`
+      return `${hostType}/components/${part}.js`
 
     case 'component-hbs':
-      return `app/templates/components/${sourceType.part}.hbs`
+      return `${hostType}/templates/components/${part}.hbs`
 
     case 'component-scss':
-      return `app/styles/components/${sourceType.part}.scss`
+      return `${hostType}/styles/components/${part}.scss`
 
     case 'route-js':
-      return `app/routes/${sourceType.part}.js`
+      return `${hostType}/routes/${part}.js`
 
     case 'controller-js':
-      return `app/controllers/${sourceType.part}.js`
+      return `${hostType}/controllers/${part}.js`
 
     case 'controller-hbs':
-      return `app/templates/${sourceType.part}.hbs`
+      return `${hostType}/templates/${part}.hbs`
   }
 }
 
@@ -84,9 +89,9 @@ function typeKeyToLabel(typeKey: string) : string {
 }
 
 interface IType {
+  hostType: string,
   key: string,
   path: string,
-  name: string,
   part: string
 }
 
@@ -136,21 +141,24 @@ export function activate(context: vscode.ExtensionContext) {
       return
     }
 
-    let relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName)
+    try {
+      const relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName)
+      const type = detectType(relativeFileName)
+     
+      const items = getRelatedTypeKeys(type)
+        .map((typeKey) => new TypeItem(type, typeKey))
+        .filter((type) => type.exists())
+      
+      vscode.window.showQuickPick(items, { placeHolder: "Select File", matchOnDetail: true }).then((item) => {
+        if (!item) return
 
-    const type = detectType(relativeFileName)
-    const items = getRelatedTypeKeys(type)
-      .map((typeKey) => new TypeItem(type, typeKey))
-      .filter((type) => type.exists())
-
-    vscode.window.showQuickPick(items, { placeHolder: "Select File", matchOnDetail: true }).then((item) => {
-      if (!item) return
-
-      const fn = vscode.Uri.parse('file://' + join(vscode.workspace.rootPath, item.description))
-      vscode.workspace.openTextDocument(fn).then(doc => {
-        return vscode.window.showTextDocument(doc)
+        vscode.workspace.openTextDocument(item.uri()).then((doc) =>
+          vscode.window.showTextDocument(doc)
+        )
       })
-    })
+    } catch(err) {
+      console.error(err.stack);
+    }
   })
 
   context.subscriptions.push(disposable)
