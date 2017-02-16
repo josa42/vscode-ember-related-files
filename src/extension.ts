@@ -7,7 +7,8 @@ import { dirname, join, basename } from 'path'
 
 const groups = [
   ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js'],
-  ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unitjs', 'route-integration-js'],
+  ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js'],
+  ['mixin-js', 'mixin-unit-js', 'mixin-integration-js'],
   ['model-js', 'model-unit-js', 'model-integration-js'],
   ['util-js', 'util-unit-js', 'util-integration-js'],
   ['helper-js', 'helper-unit-js', 'helper-integration-js']
@@ -35,6 +36,9 @@ const types = [
   { module: 'helper',                 exp: /^(app|addon)\/helpers\/(.+)\.(js)$/ },
   { module: 'helper-unit',            exp: /^()tests\/unit\/helpers\/(.+)-test\.(js)$/ },
   { module: 'helper-integration',     exp: /^()tests\/integration\/helpers\/(.+)-test\.(js)$/ },
+  { module: 'mixin',                   exp: /^(app|addon)\/mixins\/(.+)\.(js)$/ },
+  { module: 'mixin-unit',              exp: /^()tests\/unit\/mixins\/(.+)-test\.(js)$/ },
+  { module: 'mixin-integration',       exp: /^()tests\/integration\/mixins\/(.+)-test\.(js)$/ },
 ]
 
 const HOST_TYPE_CACHE = {};
@@ -120,6 +124,9 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'controller-js':
       return 'Controller'
     
+    case 'mixin-js':
+      return 'Mixin'
+    
     case 'model-js':
       return 'Model'
 
@@ -136,6 +143,8 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'component-unit-js':
     case 'route-unit-js':
     case 'controller-unit-js':
+    case 'mixin-unit-js':
+    case 'model-unit-js':
     case 'util-unit-js':
     case 'helper-unit-js':
       return 'Unit Test'
@@ -143,6 +152,8 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'component-integration-js':
     case 'route-integration-js':
     case 'controller-integration-js':
+    case 'mixin-integration-js':
+    case 'model-integration-js':
     case 'util-integration-js':
     case 'helper-integration-js':
       return 'Integration Test'
@@ -158,19 +169,10 @@ interface IType {
 
 class TypeItem implements vscode.QuickPickItem {
 
-  /**
-   * A human readable string which is rendered prominent.
-   */
   label: string
 
-  /**
-   * A human readable string which is rendered less prominent.
-   */
   description: string
 
-  /**
-   * A human readable string which is rendered less prominent.
-   */
   detail?: string
 
   constructor(sourceType: IType, typeKey: string) {
@@ -191,9 +193,6 @@ class TypeItem implements vscode.QuickPickItem {
   }
 }
 
-
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
   let disposable = vscode.commands.registerCommand('extension.relatedFiles', () => {
@@ -205,11 +204,16 @@ export function activate(context: vscode.ExtensionContext) {
     try {
       const relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName)
       const type = detectType(relativeFileName)
+
+      if (!type) { return; }
+
       const items = getRelatedTypeKeys(type)
         .map((typeKey) => new TypeItem(type, typeKey))
         .filter((type) => type.exists())
+
+      if (items.length === 0) { return; }
       
-      vscode.window.showQuickPick(items, { placeHolder: "Select File", matchOnDetail: true }).then((item) => {
+      vscode.window.showQuickPick(items, { placeHolder: "Select File", matchOnDescription: true }).then((item) => {
         if (!item) return
 
         vscode.workspace.openTextDocument(item.uri()).then((doc) =>

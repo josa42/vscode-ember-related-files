@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0
+- Add support for mixins
+
 ## 0.3.0
 - Add support for utils
 - Add support for helpers
