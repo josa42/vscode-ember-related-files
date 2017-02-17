@@ -77,7 +77,7 @@ function getRelatedTypeKeys(type: IType): string[] {
       .filter((key) => key !== type.key);
 }
 
-function getPath(sourceType: IType, typeKey: string): string {
+export function getPath(sourceType: IType, typeKey: string): string {
 
   const { hostType, part } = sourceType
   const [ , type, , subtype, ext ] = typeKey.match(/^([a-z]+)(-([a-z]+))?-([a-z]+)$/)
@@ -87,27 +87,20 @@ function getPath(sourceType: IType, typeKey: string): string {
   switch (subtype) {
     case 'integration':
     case 'unit':
-      basePath = `tests/${subtype}`
-      filePath = `${part}-test.${ext}`
-      break;
+      return `tests/${subtype}/${type}s/${part}-test.${ext}`
     
     case 'style':
-      basePath = `${hostType}/styles`
-      filePath = `${part}.${ext}`
-      break;
+      return `${hostType}/styles/${type}s/${part}.${ext}`
     
     case 'template':
-      basePath = `${hostType}/templates`
-      filePath = `${part}.${ext}`
-      break;
+      if (type === 'controller') {
+        return `${hostType}/templates/${part}.${ext}`
+      }
+      return `${hostType}/templates/${type}s/${part}.${ext}`
   
     default:
-      basePath = hostType
-      filePath = `${part}.${ext}`
-      break;
+      return `${hostType}/${type}s/${part}.${ext}`
   }
-
-  return `${basePath}/${type}s/${filePath}`
 }
 
 function typeKeyToLabel(typeKey: string) : string {
