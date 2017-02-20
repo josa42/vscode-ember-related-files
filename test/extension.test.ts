@@ -64,6 +64,12 @@ suite("Ember Related Files Extension", () => {
       assert.equal(getPath(source, 'helper-unit-js'),        'tests/unit/helpers/foo-test.js')
       assert.equal(getPath(source, 'helper-integration-js'), 'tests/integration/helpers/foo-test.js')
     })
+
+    test("Service paths", () => {
+      assert.equal(getPath(source, 'service-js'),             'app/services/foo.js')
+      assert.equal(getPath(source, 'service-unit-js'),        'tests/unit/services/foo-test.js')
+      assert.equal(getPath(source, 'service-integration-js'), 'tests/integration/services/foo-test.js')
+    })
   })
 
   suite("detectType()", () => {
@@ -123,6 +129,12 @@ suite("Ember Related Files Extension", () => {
       assert.deepEqual(detectType('tests/unit/mixins/foo-test.js'),             { hostType: 'app', path: 'tests/unit/mixins/foo-test.js', part: 'foo', key: 'mixin-unit-js' });
       assert.deepEqual(detectType('tests/integration/mixins/foo-test.js'),      { hostType: 'app', path: 'tests/integration/mixins/foo-test.js', part: 'foo', key: 'mixin-integration-js' });
     })
+
+    test("Service and related types", () => {
+      assert.deepEqual(detectType('app/services/foo.js'),                       { hostType: 'app', path: 'app/services/foo.js', part: 'foo', key: 'service-js' });
+      assert.deepEqual(detectType('tests/unit/services/foo-test.js'),           { hostType: 'app', path: 'tests/unit/services/foo-test.js', part: 'foo', key: 'service-unit-js' });
+      assert.deepEqual(detectType('tests/integration/services/foo-test.js'),    { hostType: 'app', path: 'tests/integration/services/foo-test.js', part: 'foo', key: 'service-integration-js' });
+    })
   })
 
   suite('getRelatedTypeKeys()', () => {
@@ -164,6 +176,13 @@ suite("Ember Related Files Extension", () => {
     
     test("Helper and related types", () => {
       const types = ['helper-js', 'helper-unit-js', 'helper-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
+    })
+   
+    test("Service and related types", () => {
+      const types = ['service-js', 'service-unit-js', 'service-integration-js']
       types.forEach((type) => {
         assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
       })
