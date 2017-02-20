@@ -8,7 +8,7 @@ const groups = [
   ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js'],
   ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js'],
   ['mixin-js', 'mixin-unit-js', 'mixin-integration-js'],
-  ['model-js', 'model-unit-js', 'model-integration-js', 'adapter-js', 'adapter-unit-js', 'adapter-integration-js'],
+  ['model-js', 'model-unit-js', 'model-integration-js', 'adapter-js', 'adapter-unit-js', 'adapter-integration-js', 'serializer-js', 'serializer-unit-js', 'serializer-integration-js'],
   ['util-js', 'util-unit-js', 'util-integration-js'],
   ['helper-js', 'helper-unit-js', 'helper-integration-js']
 ]
@@ -41,6 +41,9 @@ const types = [
   { module: 'adapter',                exp: /^(app|addon)\/adapters\/(.+)\.(js)$/ },
   { module: 'adapter-unit',           exp: /^()tests\/unit\/adapters\/(.+)-test\.(js)$/ },
   { module: 'adapter-integration',    exp: /^()tests\/integration\/adapters\/(.+)-test\.(js)$/ },
+  { module: 'serializer',             exp: /^(app|addon)\/serializers\/(.+)\.(js)$/ },
+  { module: 'serializer-unit',        exp: /^()tests\/unit\/serializers\/(.+)-test\.(js)$/ },
+  { module: 'serializer-integration', exp: /^()tests\/integration\/serializers\/(.+)-test\.(js)$/ },
 ]
 
 const HOST_TYPE_CACHE = {};
@@ -61,7 +64,7 @@ export function detectType(path): IType {
     .map((type) => {
       const { module, exp} = type
       const m = path.match(exp)
-
+      
       if (m) {
         const hostType = m[1] || detectHostType()
         const part = m[2]
@@ -133,6 +136,9 @@ function typeKeyToLabel(typeKey: string) : string {
     
     case 'adapter-js':
       return 'Adapter'
+    
+    case 'serializer-js':
+      return 'Serializer'
 
     case 'component-template-hbs':
     case 'controller-template-hbs':
@@ -146,6 +152,7 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'util-unit-js':
     case 'helper-unit-js':
     case 'adapter-unit-js':
+    case 'serializer-unit-js':
       return 'Unit Test'
     
     case 'component-integration-js':
@@ -156,6 +163,7 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'util-integration-js':
     case 'helper-integration-js':
     case 'adapter-integration-js':
+    case 'serializer-integration-js':
       return 'Integration Test'
   }
 

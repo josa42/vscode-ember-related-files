@@ -46,6 +46,12 @@ suite("Ember Related Files Extension", () => {
       assert.equal(getPath(source, 'adapter-unit-js'),        'tests/unit/adapters/foo-test.js')
       assert.equal(getPath(source, 'adapter-integration-js'), 'tests/integration/adapters/foo-test.js')
     })
+    
+    test("Serializer paths", () => {
+      assert.equal(getPath(source, 'serializer-js'),             'app/serializers/foo.js')
+      assert.equal(getPath(source, 'serializer-unit-js'),        'tests/unit/serializers/foo-test.js')
+      assert.equal(getPath(source, 'serializer-integration-js'), 'tests/integration/serializers/foo-test.js')
+    })
 
     test("Util paths", () => {
       assert.equal(getPath(source, 'util-js'),             'app/utils/foo.js')
@@ -89,9 +95,15 @@ suite("Ember Related Files Extension", () => {
     });
 
     test("Adapter and related types", () => {
-      assert.deepEqual(detectType('app/adapters/foo.js'),                         { hostType: 'app', path: 'app/adapters/foo.js', part: 'foo', key: 'adapter-js' });
-      assert.deepEqual(detectType('tests/unit/adapters/foo-test.js'),             { hostType: 'app', path: 'tests/unit/adapters/foo-test.js', part: 'foo', key: 'adapter-unit-js' });
-      assert.deepEqual(detectType('tests/integration/adapters/foo-test.js'),      { hostType: 'app', path: 'tests/integration/adapters/foo-test.js', part: 'foo', key: 'adapter-integration-js' });
+      assert.deepEqual(detectType('app/adapters/foo.js'),                       { hostType: 'app', path: 'app/adapters/foo.js', part: 'foo', key: 'adapter-js' });
+      assert.deepEqual(detectType('tests/unit/adapters/foo-test.js'),           { hostType: 'app', path: 'tests/unit/adapters/foo-test.js', part: 'foo', key: 'adapter-unit-js' });
+      assert.deepEqual(detectType('tests/integration/adapters/foo-test.js'),    { hostType: 'app', path: 'tests/integration/adapters/foo-test.js', part: 'foo', key: 'adapter-integration-js' });
+    });
+
+    test("Serializer and related types", () => {
+      assert.deepEqual(detectType('app/serializers/foo.js'),                    { hostType: 'app', path: 'app/serializers/foo.js', part: 'foo', key: 'serializer-js' });
+      assert.deepEqual(detectType('tests/unit/serializers/foo-test.js'),        { hostType: 'app', path: 'tests/unit/serializers/foo-test.js', part: 'foo', key: 'serializer-unit-js' });
+      assert.deepEqual(detectType('tests/integration/serializers/foo-test.js'), { hostType: 'app', path: 'tests/integration/serializers/foo-test.js', part: 'foo', key: 'serializer-integration-js' });
     });
 
     test("Util and related types", () => {
@@ -137,7 +149,7 @@ suite("Ember Related Files Extension", () => {
     })
     
     test("Model and related types", () => {
-      const types = ['model-js', 'model-unit-js', 'model-integration-js', 'adapter-js', 'adapter-unit-js', 'adapter-integration-js']
+      const types = ['model-js', 'model-unit-js', 'model-integration-js', 'adapter-js', 'adapter-unit-js', 'adapter-integration-js', 'serializer-js', 'serializer-unit-js', 'serializer-integration-js']
       types.forEach((type) => {
         assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
       })
