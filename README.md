@@ -6,6 +6,11 @@
 
 **Work in progress**
 
+## Default keybinding
+
+- **Mac**: <kbd>`cmd`</kbd> + <kbd>`r`</kbd>
+- **Win/Linux**: <kbd>`alt`</kbd> + <kbd>`ctrl`</kbd> + <kbd>`r`</kbd>
+
 ## License
 
 See: [LICENSE.md](https://github.com/josa42/vscode-markdown-table-formatter/blob/master/LICENSE.md)
