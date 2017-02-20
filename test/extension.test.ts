@@ -70,6 +70,12 @@ suite("Ember Related Files Extension", () => {
       assert.equal(getPath(source, 'service-unit-js'),        'tests/unit/services/foo-test.js')
       assert.equal(getPath(source, 'service-integration-js'), 'tests/integration/services/foo-test.js')
     })
+
+    test("Initializer paths", () => {
+      assert.equal(getPath(source, 'initializer-js'),             'app/initializers/foo.js')
+      assert.equal(getPath(source, 'initializer-unit-js'),        'tests/unit/initializers/foo-test.js')
+      assert.equal(getPath(source, 'initializer-integration-js'), 'tests/integration/initializers/foo-test.js')
+    })
   })
 
   suite("detectType()", () => {
@@ -135,10 +141,15 @@ suite("Ember Related Files Extension", () => {
       assert.deepEqual(detectType('tests/unit/services/foo-test.js'),           { hostType: 'app', path: 'tests/unit/services/foo-test.js', part: 'foo', key: 'service-unit-js' });
       assert.deepEqual(detectType('tests/integration/services/foo-test.js'),    { hostType: 'app', path: 'tests/integration/services/foo-test.js', part: 'foo', key: 'service-integration-js' });
     })
+    
+    test("Initializer and related types", () => {
+      assert.deepEqual(detectType('app/initializers/foo.js'),                       { hostType: 'app', path: 'app/initializers/foo.js', part: 'foo', key: 'initializer-js' });
+      assert.deepEqual(detectType('tests/unit/initializers/foo-test.js'),           { hostType: 'app', path: 'tests/unit/initializers/foo-test.js', part: 'foo', key: 'initializer-unit-js' });
+      assert.deepEqual(detectType('tests/integration/initializers/foo-test.js'),    { hostType: 'app', path: 'tests/integration/initializers/foo-test.js', part: 'foo', key: 'initializer-integration-js' });
+    })
   })
 
   suite('getRelatedTypeKeys()', () => {
-
     test("Component and related types", () => {
       const types = ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js']
       types.forEach((type) => {
@@ -183,6 +194,13 @@ suite("Ember Related Files Extension", () => {
    
     test("Service and related types", () => {
       const types = ['service-js', 'service-unit-js', 'service-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
+    })
+
+    test("Initializer and related types", () => {
+      const types = ['initializer-js', 'initializer-unit-js', 'initializer-integration-js']
       types.forEach((type) => {
         assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
       })

@@ -1,8 +1,10 @@
 # Changelog
 
 ## 0.7.0
-- Add support for adapter
-- Add support for serializer
+- Add support for adapters
+- Add support for serializers
+- Add support for services
+- Add support for initializers
 
 ## 0.6.0
 - Do not show quick pick list, if only one option is available. Config:

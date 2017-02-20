@@ -12,6 +12,7 @@ const groups = [
   ['util-js', 'util-unit-js', 'util-integration-js'],
   ['helper-js', 'helper-unit-js', 'helper-integration-js'],
   ['service-js', 'service-unit-js', 'service-integration-js'],
+  ['initializer-js', 'initializer-unit-js', 'initializer-integration-js'],
 ]
 
 const types = [
@@ -45,9 +46,12 @@ const types = [
   { module: 'serializer',             exp: /^(app|addon)\/serializers\/(.+)\.(js)$/ },
   { module: 'serializer-unit',        exp: /^()tests\/unit\/serializers\/(.+)-test\.(js)$/ },
   { module: 'serializer-integration', exp: /^()tests\/integration\/serializers\/(.+)-test\.(js)$/ },
-  { module: 'service',             exp: /^(app|addon)\/services\/(.+)\.(js)$/ },
-  { module: 'service-unit',        exp: /^()tests\/unit\/services\/(.+)-test\.(js)$/ },
-  { module: 'service-integration', exp: /^()tests\/integration\/services\/(.+)-test\.(js)$/ },
+  { module: 'service',                exp: /^(app|addon)\/services\/(.+)\.(js)$/ },
+  { module: 'service-unit',           exp: /^()tests\/unit\/services\/(.+)-test\.(js)$/ },
+  { module: 'service-integration',    exp: /^()tests\/integration\/services\/(.+)-test\.(js)$/ },
+  { module: 'initializer',             exp: /^(app|addon)\/initializers\/(.+)\.(js)$/ },
+  { module: 'initializer-unit',        exp: /^()tests\/unit\/initializers\/(.+)-test\.(js)$/ },
+  { module: 'initializer-integration', exp: /^()tests\/integration\/initializers\/(.+)-test\.(js)$/ },
 ]
 
 const HOST_TYPE_CACHE = {};
@@ -147,6 +151,9 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'service-js':
       return 'Service'
 
+    case 'initializer-js':
+      return 'Initializer'
+
     case 'component-template-hbs':
     case 'controller-template-hbs':
       return 'Template'
@@ -161,6 +168,7 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'adapter-unit-js':
     case 'serializer-unit-js':
     case 'service-unit-js':
+    case 'initializer-unit-js':
       return 'Unit Test'
     
     case 'component-integration-js':
@@ -173,6 +181,7 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'adapter-integration-js':
     case 'serializer-integration-js':
     case 'service-integration-js':
+    case 'initializer-integration-js':
       return 'Integration Test'
   }
 
