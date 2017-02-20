@@ -21,7 +21,7 @@ const types = [
   { module: 'component-integration',  exp: /^()tests\/integration\/components\/(.+)-test\.(js)$/ },
   { module: 'route',                  exp: /^(app|addon)\/routes\/(.+)\.(js)$/ },
   { module: 'route-unit',             exp: /^()tests\/unit\/routes\/(.+)-test\.(js)$/ },
-  { module: 'route-integration',      exp: /^()tests\/integration\/routes-test\/(.+)\.(js)$/ },
+  { module: 'route-integration',      exp: /^()tests\/integration\/routes\/(.+)-test\.(js)$/ },
   { module: 'controller',             exp: /^(app|addon)\/controllers\/(.+)\.(js)$/ },
   { module: 'controller-unit',        exp: /^()tests\/unit\/controllers\/(.+)-test\.(js)$/ },
   { module: 'controller-integration', exp: /^()tests\/integration\/controllers\/(.+)-test\.(js)$/ },
@@ -46,19 +46,19 @@ function detectHostType() {
 
   const hostPath = vscode.workspace.rootPath
   if (!HOST_TYPE_CACHE[hostPath]) {
-    HOST_TYPE_CACHE[hostPath] = fs.existsSync(join(vscode.workspace.rootPath, 'addon')) ? 'addon' : 'app'
+    HOST_TYPE_CACHE[hostPath] = fs.existsSync(join(String(vscode.workspace.rootPath), 'addon')) ? 'addon' : 'app'
   }
 
   return HOST_TYPE_CACHE[hostPath];
 }
 
-function detectType(path): IType {
+export function detectType(path): IType {
 
   return types
     .map((type) => {
       const { module, exp} = type
       const m = path.match(exp)
-      
+
       if (m) {
         const hostType = m[1] || detectHostType()
         const part = m[2]
@@ -219,7 +219,7 @@ export function activate(context: vscode.ExtensionContext) {
         return open(items.pop())
       }
       
-      vscode.window.showQuickPick(items, { placeHolder: "Select File", matchOnDescription: true }).then((item) => {
+      vscode.window.showQuickPick(items, { placeHolder: 'Select File', matchOnDescription: true }).then((item) => {
         if (item) {
           open(item)
         }
