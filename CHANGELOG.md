@@ -2,6 +2,7 @@
 
 ## 1.0.0
 - Add Icon
+- Update readme
 
 ## 0.7.0
 - Add support for adapters

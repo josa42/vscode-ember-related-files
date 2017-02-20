@@ -6,6 +6,8 @@
 
 **Work in progress**
 
+![](https://rawgithub.com/josa42/vscode-ember-related-files/master/docs/assets/screenrecording.gif)
+
 ## Default keybinding
 
 - **Mac**: <kbd>`cmd`</kbd> + <kbd>`r`</kbd>
