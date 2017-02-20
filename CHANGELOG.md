@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+- Add support for adapter
+- Add support for serializer
+
 ## 0.6.0
 - Do not show quick pick list, if only one option is available. Config:
   `showQuickPickForSingleOption`

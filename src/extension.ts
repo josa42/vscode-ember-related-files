@@ -8,7 +8,7 @@ const groups = [
   ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js'],
   ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js'],
   ['mixin-js', 'mixin-unit-js', 'mixin-integration-js'],
-  ['model-js', 'model-unit-js', 'model-integration-js'],
+  ['model-js', 'model-unit-js', 'model-integration-js', 'adapter-js', 'adapter-unit-js', 'adapter-integration-js'],
   ['util-js', 'util-unit-js', 'util-integration-js'],
   ['helper-js', 'helper-unit-js', 'helper-integration-js']
 ]
@@ -38,6 +38,9 @@ const types = [
   { module: 'mixin',                  exp: /^(app|addon)\/mixins\/(.+)\.(js)$/ },
   { module: 'mixin-unit',             exp: /^()tests\/unit\/mixins\/(.+)-test\.(js)$/ },
   { module: 'mixin-integration',      exp: /^()tests\/integration\/mixins\/(.+)-test\.(js)$/ },
+  { module: 'adapter',                exp: /^(app|addon)\/adapters\/(.+)\.(js)$/ },
+  { module: 'adapter-unit',           exp: /^()tests\/unit\/adapters\/(.+)-test\.(js)$/ },
+  { module: 'adapter-integration',    exp: /^()tests\/integration\/adapters\/(.+)-test\.(js)$/ },
 ]
 
 const HOST_TYPE_CACHE = {};
@@ -127,11 +130,14 @@ function typeKeyToLabel(typeKey: string) : string {
     
     case 'helper-js':
       return 'Helper'
+    
+    case 'adapter-js':
+      return 'Adapter'
 
     case 'component-template-hbs':
     case 'controller-template-hbs':
       return 'Template'
-    
+
     case 'component-unit-js':
     case 'route-unit-js':
     case 'controller-unit-js':
@@ -139,6 +145,7 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'model-unit-js':
     case 'util-unit-js':
     case 'helper-unit-js':
+    case 'adapter-unit-js':
       return 'Unit Test'
     
     case 'component-integration-js':
@@ -148,6 +155,7 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'model-integration-js':
     case 'util-integration-js':
     case 'helper-integration-js':
+    case 'adapter-integration-js':
       return 'Integration Test'
   }
 
