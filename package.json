@@ -36,6 +36,17 @@
                 "title": "Related Files"
             }
         ],
+        "configuration": {
+            "type": "object",
+            "title": "Ember Related Files",
+            "properties": {
+                "emberRelatedFiles.showQuickPickForSingleOption": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show pick pick list event if only one option is available."
+                }
+            }
+        },
         "keybindings": [
             {
                 "mac": "cmd+r",

@@ -186,6 +186,16 @@ class TypeItem implements vscode.QuickPickItem {
   }
 }
 
+function open(item: TypeItem) {
+  vscode.workspace.openTextDocument(item.uri()).then((doc) =>
+    vscode.window.showTextDocument(doc)
+  )
+}
+
+function config<T>(key: string) : T {
+  return vscode.workspace.getConfiguration('emberRelatedFiles').get<T>(key);
+}
+
 export function activate(context: vscode.ExtensionContext) {
 
   let disposable = vscode.commands.registerCommand('extension.relatedFiles', () => {
@@ -205,13 +215,15 @@ export function activate(context: vscode.ExtensionContext) {
         .filter((type) => type.exists())
 
       if (items.length === 0) { return; }
+
+      if (items.length === 1 && !config('showQuickPickForSingleOption')) {
+        return open(items.pop())
+      }
       
       vscode.window.showQuickPick(items, { placeHolder: "Select File", matchOnDescription: true }).then((item) => {
-        if (!item) return
-
-        vscode.workspace.openTextDocument(item.uri()).then((doc) =>
-          vscode.window.showTextDocument(doc)
-        )
+        if (item) {
+          open(item)
+        }
       })
     } catch(err) {
       console.error(err.stack);

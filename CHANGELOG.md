@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+- Do not show quick pick list, if only one option is available. Config:
+  `showQuickPickForSingleOption`
+
 ## 0.5.0
 - Add keyboarshortcuts
 
