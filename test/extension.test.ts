@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import * as vscode from 'vscode'
-import { getPath, detectType } from '../src/extension'
+import { getPath, detectType, getRelatedTypeKeys } from '../src/extension'
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Ember Related Files Extension", () => {
@@ -98,6 +98,51 @@ suite("Ember Related Files Extension", () => {
       assert.deepEqual(detectType('app/mixins/foo.js'),                         { hostType: 'app', path: 'app/mixins/foo.js', part: 'foo', key: 'mixin-js' });
       assert.deepEqual(detectType('tests/unit/mixins/foo-test.js'),             { hostType: 'app', path: 'tests/unit/mixins/foo-test.js', part: 'foo', key: 'mixin-unit-js' });
       assert.deepEqual(detectType('tests/integration/mixins/foo-test.js'),      { hostType: 'app', path: 'tests/integration/mixins/foo-test.js', part: 'foo', key: 'mixin-integration-js' });
+    })
+  })
+
+  suite('getRelatedTypeKeys()', () => {
+
+    test("Component and related types", () => {
+      const types = ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
+    })
+    
+    test("Controller and related types", () => {
+      const types = ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
+    })
+    
+    test("Mixin and related types", () => {
+      const types = ['mixin-js', 'mixin-unit-js', 'mixin-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
+    })
+    
+    test("Model and related types", () => {
+      const types = ['model-js', 'model-unit-js', 'model-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
+    })
+    
+    test("Util and related types", () => {
+      const types = ['util-js', 'util-unit-js', 'util-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
+    })
+    
+    test("Helper and related types", () => {
+      const types = ['helper-js', 'helper-unit-js', 'helper-integration-js']
+      types.forEach((type) => {
+        assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
+      })
     })
   })
 })

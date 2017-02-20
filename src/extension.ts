@@ -70,10 +70,10 @@ export function detectType(path): IType {
     .find((type) => Boolean(type))
 }
 
-function getRelatedTypeKeys(type: IType): string[] {
+export function getRelatedTypeKeys(typeKey: string): string[] {
     return groups
-      .find((group) => group.indexOf(type.key) !== -1)
-      .filter((key) => key !== type.key);
+      .find((group) => group.indexOf(typeKey) !== -1)
+      .filter((key) => key !== typeKey);
 }
 
 export function getPath(sourceType: IType, typeKey: string): string {
@@ -150,6 +150,8 @@ function typeKeyToLabel(typeKey: string) : string {
     case 'helper-integration-js':
       return 'Integration Test'
   }
+
+  return typeKey
 }
 
 interface IType {
@@ -209,7 +211,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (!type) { return; }
 
-      const items = getRelatedTypeKeys(type)
+      const items = getRelatedTypeKeys(type.key)
         .map((typeKey) => new TypeItem(type, typeKey))
         .filter((type) => type.exists())
 
