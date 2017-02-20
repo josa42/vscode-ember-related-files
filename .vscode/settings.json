@@ -12,5 +12,6 @@
   "eslint.enable": false,
   "jshint.enable": false,
   "jscs.enable": false,
-  "tslint.enable": false
+  "tslint.enable": false,
+  "sasslint.enable": false
 }

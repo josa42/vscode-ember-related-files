@@ -20,7 +20,7 @@
     "categories": [
         "Other"
     ],
-    "icon": null,
+    "icon": "docs/assets/icon-128x128.png",
     "galleryBanner": {
         "color": "#FFFFFF",
         "theme": "light"

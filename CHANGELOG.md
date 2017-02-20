@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0
+- Add Icon
+
 ## 0.7.0
 - Add support for adapters
 - Add support for serializers
