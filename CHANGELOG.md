@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0
+## 0.6.0
 - Do not show quick pick list, if only one option is available. Config:
   `showQuickPickForSingleOption`
 
