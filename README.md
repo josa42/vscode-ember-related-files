@@ -4,8 +4,6 @@
   ![](https://travis-ci.org/josa42/vscode-ember-related-files.svg?branch=master)
 ](https://travis-ci.org/josa42/vscode-ember-related-files)
 
-**Work in progress**
-
 ![](https://rawgithub.com/josa42/vscode-ember-related-files/master/docs/assets/screenrecording.gif)
 
 ## Default keybinding
