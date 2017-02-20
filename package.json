@@ -4,7 +4,6 @@
     "description": "",
     "version": "0.7.0",
     "publisher": "josa",
-    "preview": true,
     "license": "MIT",
     "homepage": "https://github.com/josa42/vscode-ember-related-files",
     "repository": {
