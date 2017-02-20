@@ -2,7 +2,7 @@
     "name": "ember-related-files",
     "displayName": "Ember Related Files",
     "description": "",
-    "version": "0.7.0",
+    "version": "1.0.0",
     "publisher": "josa",
     "license": "MIT",
     "homepage": "https://github.com/josa42/vscode-ember-related-files",
