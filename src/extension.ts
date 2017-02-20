@@ -1,6 +1,5 @@
 'use strict'
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+
 import * as vscode from 'vscode'
 import * as fs from 'fs'
 import { dirname, join, basename } from 'path'
@@ -36,9 +35,9 @@ const types = [
   { module: 'helper',                 exp: /^(app|addon)\/helpers\/(.+)\.(js)$/ },
   { module: 'helper-unit',            exp: /^()tests\/unit\/helpers\/(.+)-test\.(js)$/ },
   { module: 'helper-integration',     exp: /^()tests\/integration\/helpers\/(.+)-test\.(js)$/ },
-  { module: 'mixin',                   exp: /^(app|addon)\/mixins\/(.+)\.(js)$/ },
-  { module: 'mixin-unit',              exp: /^()tests\/unit\/mixins\/(.+)-test\.(js)$/ },
-  { module: 'mixin-integration',       exp: /^()tests\/integration\/mixins\/(.+)-test\.(js)$/ },
+  { module: 'mixin',                  exp: /^(app|addon)\/mixins\/(.+)\.(js)$/ },
+  { module: 'mixin-unit',             exp: /^()tests\/unit\/mixins\/(.+)-test\.(js)$/ },
+  { module: 'mixin-integration',      exp: /^()tests\/integration\/mixins\/(.+)-test\.(js)$/ },
 ]
 
 const HOST_TYPE_CACHE = {};
