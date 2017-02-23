@@ -213,7 +213,7 @@ class TypeItem implements vscode.QuickPickItem {
   }
 
   public uri() : vscode.Uri {
-    return vscode.Uri.parse(`file://${this.path()}`)
+    return vscode.Uri.file(this.path())
   }
 
   public exists() : boolean {
