@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1
+- Fix opening files on windows ([#1](https://github.com/josa42/vscode-ember-related-files/pull/1))
+
 ## 1.0.0
 - Add Icon
 - Update readme
