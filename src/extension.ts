@@ -5,8 +5,10 @@ import * as fs from 'fs'
 import { dirname, join, basename } from 'path'
 
 const groups = [
-  ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js'],
-  ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js'],
+  ['pod:component-js', 'pod:component-template-hbs', 'pod:component-integration-js', 'pod:component-unit-js',
+  'component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js'],
+  ['pod:route-js', 'pod:route-unit-js', 'pod:route-integration-js', 'pod:controller-js','pod:controller-template-hbs', 'pod:controller-unit-js', 'pod:controller-integration-js',
+  'controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js'],
   ['mixin-js', 'mixin-unit-js', 'mixin-integration-js'],
   ['model-js', 'model-unit-js', 'model-integration-js', 'adapter-js', 'adapter-unit-js', 'adapter-integration-js', 'serializer-js', 'serializer-unit-js', 'serializer-integration-js'],
   ['util-js', 'util-unit-js', 'util-integration-js'],
@@ -16,11 +18,27 @@ const groups = [
 ]
 
 const types = [
+
+  { module: 'pod:component',           exp: /^(app|addon)\/components\/(.+)\/component\.(js)$/ },
+  { module: 'pod:component-template',  exp: /^(app|addon)\/components\/(.+)\/template\.(hbs)$/ },
+  { module: 'pod:component-unit',      exp: /^()tests\/unit\/components\/(.+)\/component-test\.(js)$/ },
+  { module: 'pod:component-integration', exp: /^()tests\/integration\/components\/(.+)\/component-test\.(js)$/ },
+
   { module: 'component',               exp: /^(app|addon)\/components\/(.+)\.(js)$/ },
   { module: 'component-template',      exp: /^(app|addon)\/templates\/components\/(.+)\.(hbs)$/ },
   { module: 'component-style',         exp: /^(app|addon)\/styles\/components\/(.+)\.(scss)$/ },
   { module: 'component-unit',          exp: /^()tests\/unit\/components\/(.+)-test\.(js)$/ },
   { module: 'component-integration',   exp: /^()tests\/integration\/components\/(.+)-test\.(js)$/ },
+  
+
+  { module: 'pod:route',               exp: /^(app|addon)\/(.+)\/route\.(js)$/ },
+  { module: 'pod:route-unit',          exp: /^()tests\/unit\/(.+)\/route-test\.(js)$/ },
+  { module: 'pod:route-integration',   exp: /^()tests\/integration\/(.+)\/route-test\.(js)$/ },
+  { module: 'pod:controller',          exp: /^(app|addon)\/(.+)\/controller\.(js)$/ },
+  { module: 'pod:controller-template', exp: /^(app|addon)\/(.+)\/template\.(hbs)$/ },
+  { module: 'pod:controller-unit',     exp: /^()tests\/unit\/(.+)\/controller-test\.(js)$/ },
+  { module: 'pod:controller-integration', exp: /^()tests\/integration\/(.+)\/controller-test\.(js)$/ },
+
   { module: 'route',                   exp: /^(app|addon)\/routes\/(.+)\.(js)$/ },
   { module: 'route-unit',              exp: /^()tests\/unit\/routes\/(.+)-test\.(js)$/ },
   { module: 'route-integration',       exp: /^()tests\/integration\/routes\/(.+)-test\.(js)$/ },
@@ -93,30 +111,58 @@ export function getRelatedTypeKeys(typeKey: string): string[] {
 export function getPath(sourceType: IType, typeKey: string): string {
 
   const { hostType, part } = sourceType
-  const [ , type, , subtype, ext ] = typeKey.match(/^([a-z]+)(-([a-z]+))?-([a-z]+)$/)
+  const [, , , pod, type, , subtype, ext] = typeKey.match(/^((([a-z]+):)?([a-z]+))(-([a-z]+))?-([a-z]+)$/)
 
   let filePath, basePath;
 
-  switch (subtype) {
-    case 'integration':
-    case 'unit':
-      return `tests/${subtype}/${type}s/${part}-test.${ext}`
+  if (pod) {
+    switch (subtype) {
+      case 'integration':
+      case 'unit':
+        if (type === 'component') {
+          return `tests/${subtype}/${type}s/${part}/${type}-test.${ext}`
+        }
+        return `tests/${subtype}/${part}/${type}-test.${ext}` 
+      
+      case 'style':
+        return `${hostType}/styles/${type}s/${part}.${ext}`
+      
+      case 'template':
+        if (type === 'controller') {
+          return `${hostType}/${part}/template.${ext}`  
+        }
+        return `${hostType}/${type}s/${part}/template.${ext}` 
     
-    case 'style':
-      return `${hostType}/styles/${type}s/${part}.${ext}`
+      default: 
+        if (type === 'route' || type === 'controller') {
+          return `${hostType}/${part}/${type}.${ext}`   
+        }
+        return `${hostType}/${type}s/${part}/${type}.${ext}` 
+    }
+  } else {
+    switch (subtype) {
+      case 'integration':
+      case 'unit': 
+        return `tests/${subtype}/${type}s/${part}-test.${ext}`
+      
+      case 'style':
+        return `${hostType}/styles/${type}s/${part}.${ext}`
+      
+      case 'template':
+        if (type === 'controller') { 
+          return `${hostType}/templates/${part}.${ext}`
+        } 
+        return `${hostType}/templates/${type}s/${part}.${ext}`
     
-    case 'template':
-      if (type === 'controller') {
-        return `${hostType}/templates/${part}.${ext}`
-      }
-      return `${hostType}/templates/${type}s/${part}.${ext}`
-  
-    default:
-      return `${hostType}/${type}s/${part}.${ext}`
+      default: 
+        return `${hostType}/${type}s/${part}.${ext}`
+    }
   }
+ 
 }
 
 function typeKeyToLabel(typeKey: string) : string {
+  typeKey = typeKey.replace('pod:', '')
   switch (typeKey) {
     case 'component-js':
       return 'Component'
