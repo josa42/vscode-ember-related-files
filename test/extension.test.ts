@@ -14,6 +14,11 @@ suite("Ember Related Files Extension", () => {
       assert.equal(getPath(source, 'component-style-scss'),     'app/styles/components/foo.scss')
       assert.equal(getPath(source, 'component-unit-js'),        'tests/unit/components/foo-test.js')
       assert.equal(getPath(source, 'component-integration-js'), 'tests/integration/components/foo-test.js')
+
+      assert.equal(getPath(source, 'pod:component-js'),             'app/components/foo/component.js')
+      assert.equal(getPath(source, 'pod:component-template-hbs'),   'app/components/foo/template.hbs')
+      assert.equal(getPath(source, 'pod:component-unit-js'),        'tests/unit/components/foo/component-test.js')
+      assert.equal(getPath(source, 'pod:component-integration-js'), 'tests/integration/components/foo/component-test.js')
     })
 
     test("Controller paths", () => {
@@ -21,12 +26,21 @@ suite("Ember Related Files Extension", () => {
       assert.equal(getPath(source, 'controller-template-hbs'),   'app/templates/foo.hbs')
       assert.equal(getPath(source, 'controller-unit-js'),        'tests/unit/controllers/foo-test.js')
       assert.equal(getPath(source, 'controller-integration-js'), 'tests/integration/controllers/foo-test.js')
+
+      assert.equal(getPath(source, 'pod:controller-js'),             'app/foo/controller.js')
+      assert.equal(getPath(source, 'pod:controller-template-hbs'),   'app/foo/template.hbs')
+      assert.equal(getPath(source, 'pod:controller-unit-js'),        'tests/unit/foo/controller-test.js')
+      assert.equal(getPath(source, 'pod:controller-integration-js'), 'tests/integration/foo/controller-test.js')
     })
 
     test("Route paths", () => {
       assert.equal(getPath(source, 'route-js'),             'app/routes/foo.js')
       assert.equal(getPath(source, 'route-unit-js'),        'tests/unit/routes/foo-test.js')
       assert.equal(getPath(source, 'route-integration-js'), 'tests/integration/routes/foo-test.js')
+
+      assert.equal(getPath(source, 'pod:route-js'),             'app/foo/route.js')
+      assert.equal(getPath(source, 'pod:route-unit-js'),        'tests/unit/foo/route-test.js')
+      assert.equal(getPath(source, 'pod:route-integration-js'), 'tests/integration/foo/route-test.js')
     })
     
     test("Mixin paths", () => {
@@ -151,14 +165,14 @@ suite("Ember Related Files Extension", () => {
 
   suite('getRelatedTypeKeys()', () => {
     test("Component and related types", () => {
-      const types = ['component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js']
+      const types = ['pod:component-js', 'pod:component-template-hbs', 'pod:component-integration-js', 'pod:component-unit-js', 'component-js', 'component-template-hbs', 'component-style-scss', 'component-unit-js', 'component-integration-js']
       types.forEach((type) => {
         assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
       })
     })
     
     test("Controller and related types", () => {
-      const types = ['controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js']
+      const types = ['pod:route-js', 'pod:route-unit-js', 'pod:route-integration-js', 'pod:controller-js','pod:controller-template-hbs', 'pod:controller-unit-js', 'pod:controller-integration-js', 'controller-js', 'controller-template-hbs', 'route-js', 'controller-unit-js', 'controller-integration-js', 'route-unit-js', 'route-integration-js']
       types.forEach((type) => {
         assert.deepEqual(getRelatedTypeKeys(type), types.filter((iType) => iType !== type));
       })
