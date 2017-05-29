@@ -63,10 +63,13 @@
         "test": "node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
+        "@types/mocha": "^2.2.41",
+        "@types/node": "^6.0.73",
         "mocha": "^2.3.3",
-        "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
+        "typescript": "^2.3.3",
+        "vscode": "^1.1.0"
+    },
+    "dependencies": {
+        "ember-find-related-files": "0.1.0"
     }
 }
