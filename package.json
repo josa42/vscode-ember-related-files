@@ -48,7 +48,7 @@
         },
         "keybindings": [
             {
-                "mac": "cmd+r",
+                "mac": "cmd+alt+r",
                 "win": "ctrl+alt+r",
                 "linux": "ctrl+alt+r",
                 "key": "ctrl+alt+r",
