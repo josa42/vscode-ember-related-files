@@ -3,7 +3,8 @@
 import * as vscode from 'vscode'
 import * as fs from 'fs'
 import { dirname, join, basename } from 'path'
-import findRelatedFiles = require('ember-find-related-files')
+
+const findRelatedFiles = require('ember-find-related-files').findRelatedFiles
 
 interface IRelatedFile {
   label: string,
