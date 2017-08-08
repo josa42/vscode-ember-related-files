@@ -2,7 +2,7 @@ sudo: false
 language: node_js
 
 node_js:
-  - "7.0"
+  - "8.2.1"
 
 os:
   - linux
