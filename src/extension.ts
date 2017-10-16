@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode'
 import * as fs from 'fs'
-import { dirname, join, basename } from 'path'
+import { dirname, join, basename, sep as fileSeperator } from 'path'
 
 const findRelatedFiles = require('ember-find-related-files').findRelatedFiles
 
@@ -49,9 +49,14 @@ export function activate(context: vscode.ExtensionContext) {
       return
     }
 
-    const relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName)
+    let relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName);
+    let rootPath = vscode.workspace.rootPath;
+    if (fileSeperator === '\\') {
+      relativeFileName = relativeFileName.replace(/\\/g, "\/");
+      rootPath = rootPath.replace(/\\/g, "\/");
+    }
 
-    const items = findRelatedFiles(vscode.workspace.rootPath, relativeFileName)
+    const items = findRelatedFiles(rootPath, relativeFileName)
       .map((item) => new TypeItem(item))
 
     if (items.length === 0) { return; }
