@@ -1,6 +1,6 @@
 'use strict'
 
-import * as vscode from 'vscode'
+import { window, workspace, commands, Uri, ExtensionContext, QuickPickItem } from 'vscode'
 import * as fs from 'fs'
 import { dirname, join, basename, sep as fileSeperator } from 'path'
 
@@ -11,7 +11,7 @@ interface IRelatedFile {
   path: string
 }
 
-class TypeItem implements vscode.QuickPickItem {
+class TypeItem implements QuickPickItem {
 
   rootPath: string
 
@@ -31,29 +31,29 @@ class TypeItem implements vscode.QuickPickItem {
     return join(this.rootPath, this.description)
   }
 
-  public uri() : vscode.Uri {
-    return vscode.Uri.file(this.path())
+  public uri() : Uri {
+    return Uri.file(this.path())
   }
 }
 
 function open(item: TypeItem) {
-  vscode.workspace.openTextDocument(item.uri()).then((doc) =>
-    vscode.window.showTextDocument(doc)
+  workspace.openTextDocument(item.uri()).then((doc) =>
+    window.showTextDocument(doc)
   )
 }
 
 function config<T>(key: string) : T {
-  return vscode.workspace.getConfiguration('emberRelatedFiles').get<T>(key);
+  return workspace.getConfiguration('emberRelatedFiles').get<T>(key);
 }
 
-export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand('extension.relatedFiles', () => {
-    if (!vscode.window.activeTextEditor) {
+export function activate(context: ExtensionContext) {
+  let disposable = commands.registerCommand('extension.relatedFiles', () => {
+    if (!window.activeTextEditor) {
       return
     }
 
-    let relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName, false);
-    let { uri: { path: rootPath } } = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)
+    let relativeFileName = workspace.asRelativePath(window.activeTextEditor.document.fileName, false);
+    let { uri: { path: rootPath } } = workspace.getWorkspaceFolder(window.activeTextEditor.document.uri)
     if (fileSeperator === '\\') {
         relativeFileName = relativeFileName.replace(/\\/g, "\/");
         rootPath = rootPath.replace(/\\/g, "\/");
@@ -68,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
       return open(items.pop())
     }
 
-    vscode.window.showQuickPick(items as TypeItem[], { placeHolder: 'Select File', matchOnDescription: true }).then((item) => {
+    window.showQuickPick(items as TypeItem[], { placeHolder: 'Select File', matchOnDescription: true }).then((item) => {
       if (item) {
         open(item)
       }
