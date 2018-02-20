@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.1
+- Add a little color to the icon
+
 ## 1.2.0
 - Add support for multi-root workspaces
 
