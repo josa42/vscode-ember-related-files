@@ -13,19 +13,22 @@ interface IRelatedFile {
 
 class TypeItem implements vscode.QuickPickItem {
 
+  rootPath: string
+
   label: string
 
   description: string
 
   detail?: string
 
-  constructor(item: IRelatedFile) {
+  constructor(item: IRelatedFile, rootPath: string) {
     this.label = item.label
     this.description = item.path
+    this.rootPath = rootPath
   }
 
   public path() : string {
-    return join(vscode.workspace.rootPath, this.description)
+    return join(this.rootPath, this.description)
   }
 
   public uri() : vscode.Uri {
@@ -49,14 +52,15 @@ export function activate(context: vscode.ExtensionContext) {
       return
     }
 
-    let relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName);
-    let rootPath = vscode.workspace.rootPath;
+    let relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName, false);
+    let { uri: { path: rootPath } } = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)
     if (fileSeperator === '\\') {
         relativeFileName = relativeFileName.replace(/\\/g, "\/");
         rootPath = rootPath.replace(/\\/g, "\/");
     }
+
     const items = findRelatedFiles(rootPath, relativeFileName)
-        .map((item) => new TypeItem(item));
+        .map((item) => new TypeItem(item, rootPath));
 
     if (items.length === 0) { return; }
 

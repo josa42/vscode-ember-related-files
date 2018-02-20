@@ -14,7 +14,7 @@
         "url": "https://github.com/josa42/vscode-ember-related-files/issues"
     },
     "engines": {
-        "vscode": "^1.5.0"
+        "vscode": "^1.20.0"
     },
     "categories": [
         "Other"
@@ -67,7 +67,7 @@
         "@types/node": "^6.0.73",
         "mocha": "^2.3.3",
         "typescript": "^2.3.3",
-        "vscode": "^1.1.0"
+        "vscode": "^1.1.10"
     },
     "dependencies": {
         "ember-find-related-files": "0.3.0"
