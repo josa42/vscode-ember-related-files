@@ -1,6 +1,14 @@
 # Changelog
 
+## 1.2.0
+- Add support for multi-root workspaces
+
+## 1.1.1
 - Fix osx shortcut in README.md
+
+## 1.1.0
+- Change keybord short cut
+- Refactoring
 
 ## 1.0.1
 - Fix opening files on windows ([#1](https://github.com/josa42/vscode-ember-related-files/pull/1))
