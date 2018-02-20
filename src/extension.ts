@@ -55,12 +55,12 @@ export function activate(context: ExtensionContext) {
     let relativeFileName = workspace.asRelativePath(window.activeTextEditor.document.fileName, false);
     let { uri: { path: rootPath } } = workspace.getWorkspaceFolder(window.activeTextEditor.document.uri)
     if (fileSeperator === '\\') {
-        relativeFileName = relativeFileName.replace(/\\/g, "\/");
-        rootPath = rootPath.replace(/\\/g, "\/");
+      relativeFileName = relativeFileName.replace(/\\/g, "\/");
+      rootPath = rootPath.replace(/\\/g, "\/");
     }
 
     const items = findRelatedFiles(rootPath, relativeFileName)
-        .map((item) => new TypeItem(item, rootPath));
+      .map((item) => new TypeItem(item, rootPath));
 
     if (items.length === 0) { return; }
 
