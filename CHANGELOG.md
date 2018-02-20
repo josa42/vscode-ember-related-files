@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.3.0
+- Open Files as preview  
+  (Can be disabled in the settings: `emberRelatedFiles.enablePreview`)
+
 ## 1.2.1
 - Add a little color to the icon
 

@@ -43,6 +43,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Show pick pick list event if only one option is available."
+                },
+                "emberRelatedFiles.enablePreview": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Preview editors are reused until they are kept."
                 }
             }
         },

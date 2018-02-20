@@ -38,7 +38,7 @@ class TypeItem implements QuickPickItem {
 
 function open(item: TypeItem) {
   workspace.openTextDocument(item.uri()).then((doc) =>
-    window.showTextDocument(doc)
+    window.showTextDocument(doc.uri, { preview: config<boolean>('enablePreview') })
   )
 }
 
