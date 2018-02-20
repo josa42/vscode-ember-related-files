@@ -3,6 +3,7 @@
 # 1.3.0
 - Open Files as preview  
   (Can be disabled in the settings: `emberRelatedFiles.enablePreview`)
+- Add support for apps in sub folders
 
 ## 1.2.1
 - Add a little color to the icon
