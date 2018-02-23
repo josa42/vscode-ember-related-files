@@ -89,7 +89,7 @@ export function activate(context: ExtensionContext) {
     }
 
     let relativePath = workspace.asRelativePath(window.activeTextEditor.document.fileName, false);
-    let { uri: { path: workspaceFolder } } = workspace.getWorkspaceFolder(window.activeTextEditor.document.uri)
+    let { uri: { fsPath: workspaceFolder } } = workspace.getWorkspaceFolder(window.activeTextEditor.document.uri)
     let { exists, rootPath, filePath } = findEmberFilePath(workspaceFolder, relativePath)
     if (!exists) {
       return;
