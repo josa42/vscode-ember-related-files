@@ -1,7 +1,8 @@
 'use strict'
 
-import * as vscode from 'vscode'
+import { window, workspace, commands, Uri, ExtensionContext, QuickPickItem } from 'vscode'
 import * as fs from 'fs'
+import * as path from 'path'
 import { dirname, join, basename, sep as fileSeperator } from 'path'
 
 const findRelatedFiles = require('ember-find-related-files').findRelatedFiles
@@ -11,53 +12,96 @@ interface IRelatedFile {
   path: string
 }
 
-class TypeItem implements vscode.QuickPickItem {
-
+class TypeItem implements QuickPickItem {
+  rootPath: string
   label: string
-
   description: string
-
   detail?: string
 
-  constructor(item: IRelatedFile) {
+  constructor(item: IRelatedFile, rootPath: string) {
     this.label = item.label
     this.description = item.path
+    this.rootPath = rootPath
   }
 
   public path() : string {
-    return join(vscode.workspace.rootPath, this.description)
+    return join(this.rootPath, this.description)
   }
 
-  public uri() : vscode.Uri {
-    return vscode.Uri.file(this.path())
+  public uri() : Uri {
+    return Uri.file(this.path())
   }
 }
 
 function open(item: TypeItem) {
-  vscode.workspace.openTextDocument(item.uri()).then((doc) =>
-    vscode.window.showTextDocument(doc)
+  workspace.openTextDocument(item.uri()).then((doc) =>
+    window.showTextDocument(doc.uri, { preview: config<boolean>('enablePreview') })
   )
 }
 
 function config<T>(key: string) : T {
-  return vscode.workspace.getConfiguration('emberRelatedFiles').get<T>(key);
+  return workspace.getConfiguration('emberRelatedFiles').get<T>(key);
 }
 
-export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand('extension.relatedFiles', () => {
-    if (!vscode.window.activeTextEditor) {
+function isEmberProject (dirPath) {
+  return isDir(dirPath) && isFile(dirPath, 'ember-cli-build.js')
+}
+
+function isFile(...pathParts) : boolean {
+  try {
+    return fs.lstatSync(path.join(...pathParts)).isFile()
+  } catch(error) {}
+  return false
+}
+
+function isDir(...pathParts) : boolean {
+  try {
+    return fs.lstatSync(path.join(...pathParts)).isDirectory()
+  } catch(error) {}
+  return false
+}
+
+interface IEmberFilePaths {
+  exists: boolean,
+  rootPath?: string,
+  filePath?: string
+}
+
+function findEmberFilePath (rootPath: string, filePath: string) : IEmberFilePaths {
+  const filePathParts = filePath.split(fileSeperator)
+
+  while(!isEmberProject(rootPath) && filePathParts.length) {
+    rootPath = path.join(rootPath, filePathParts.splice(0, 1).pop())
+    filePath = path.join(...filePathParts)
+  }
+
+  if (!filePathParts.length) {
+    return { exists: false }
+  }
+
+  return { exists: true, rootPath, filePath }
+}
+
+export function activate(context: ExtensionContext) {
+  let disposable = commands.registerCommand('extension.relatedFiles', () => {
+    if (!window.activeTextEditor) {
       return
     }
 
-    let relativeFileName = vscode.workspace.asRelativePath(vscode.window.activeTextEditor.document.fileName);
-    let rootPath = vscode.workspace.rootPath;
+    let relativePath = workspace.asRelativePath(window.activeTextEditor.document.fileName, false);
+    let { uri: { path: workspaceFolder } } = workspace.getWorkspaceFolder(window.activeTextEditor.document.uri)
+    let { exists, rootPath, filePath } = findEmberFilePath(workspaceFolder, relativePath)
+    if (!exists) {
+      return;
+    }
+
     if (fileSeperator === '\\') {
-      relativeFileName = relativeFileName.replace(/\\/g, "\/");
+      filePath = filePath.replace(/\\/g, "\/");
       rootPath = rootPath.replace(/\\/g, "\/");
     }
 
-    const items = findRelatedFiles(rootPath, relativeFileName)
-      .map((item) => new TypeItem(item))
+    const items = findRelatedFiles(rootPath, filePath)
+      .map((item) => new TypeItem(item, rootPath));
 
     if (items.length === 0) { return; }
 
@@ -65,7 +109,7 @@ export function activate(context: vscode.ExtensionContext) {
       return open(items.pop())
     }
 
-    vscode.window.showQuickPick(items as TypeItem[], { placeHolder: 'Select File', matchOnDescription: true }).then((item) => {
+    window.showQuickPick(items as TypeItem[], { placeHolder: 'Select File', matchOnDescription: true }).then((item) => {
       if (item) {
         open(item)
       }

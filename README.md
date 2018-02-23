@@ -10,6 +10,15 @@
 - **Mac**: <kbd>`alt`</kbd> + <kbd>`cmd`</kbd> + <kbd>`r`</kbd>
 - **Win/Linux**: <kbd>`alt`</kbd> + <kbd>`ctrl`</kbd> + <kbd>`r`</kbd>
 
+## Configuration
+
+- `emberRelatedFiles.showQuickPickForSingleOption` (default: `false`)  
+  Show pick quick list event if only one option is available.
+
+- `emberRelatedFiles.enablePreview` (default: `true`)  
+  Preview editors are reused until they are kept. If
+  `workbench.editor.enablePreview` is set to `false` this setting has no effect.
+
 ## License
 
 See: [LICENSE.md](https://github.com/josa42/vscode-markdown-table-formatter/blob/master/LICENSE.md)

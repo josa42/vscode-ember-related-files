@@ -2,7 +2,7 @@
 {
   "files.exclude": {
     "out": true,
-    "node_modules": true,
+    "node_modules": false,
     "*.vsix": true
   },
   "search.exclude": {
