@@ -3,7 +3,7 @@
 import { window, workspace, commands, Uri, ExtensionContext, QuickPickItem } from 'vscode'
 import * as fs from 'fs'
 import * as path from 'path'
-import { dirname, join, basename, sep as fileSeperator } from 'path'
+import { dirname, join, basename, sep as fileSeparator } from 'path'
 
 const findRelatedFiles = require('ember-find-related-files').findRelatedFiles
 
@@ -68,7 +68,7 @@ interface IEmberFilePaths {
 }
 
 function findEmberFilePath (rootPath: string, filePath: string) : IEmberFilePaths {
-  const filePathParts = filePath.split(fileSeperator)
+  const filePathParts = filePath.split(fileSeparator)
 
   while(!isEmberProject(rootPath) && filePathParts.length) {
     rootPath = path.join(rootPath, filePathParts.splice(0, 1).pop())
@@ -95,7 +95,7 @@ export function activate(context: ExtensionContext) {
       return;
     }
 
-    if (fileSeperator === '\\') {
+    if (fileSeparator === '\\') {
       filePath = filePath.replace(/\\/g, "\/");
       rootPath = rootPath.replace(/\\/g, "\/");
     }
