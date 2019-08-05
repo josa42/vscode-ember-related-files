@@ -65,7 +65,8 @@
         "vscode:prepublish": "tsc -p ./",
         "compile": "tsc -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
+        "test": "node ./node_modules/vscode/bin/test",
+        "publish": "np --no-publish $* && vsce package && vsce publish"
     },
     "devDependencies": {
         "@types/mocha": "^5.2.5",
