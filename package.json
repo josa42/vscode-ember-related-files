@@ -63,7 +63,7 @@
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
+        "compile": "tsc -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
     },
@@ -72,9 +72,9 @@
         "@types/node": "^10.7.1",
         "mocha": "~5.2.0",
         "typescript": "^3.0.1",
-        "vscode": "^1.1.10"
+        "vscode": "^1.1.36"
     },
     "dependencies": {
-        "ember-find-related-files": "0.3.1"
+        "ember-find-related-files": "0.4.0"
     }
 }
