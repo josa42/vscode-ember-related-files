@@ -7,7 +7,7 @@
 
 ## Default keybinding
 
-- **Mac**: <kbd>`alt`</kbd> + <kbd>`cmd`</kbd> + <kbd>`r`</kbd>
+- **Mac**: <kbd>`⌥`</kbd> + <kbd>`⌘`</kbd> + <kbd>`r`</kbd>
 - **Win/Linux**: <kbd>`alt`</kbd> + <kbd>`ctrl`</kbd> + <kbd>`r`</kbd>
 
 ## Configuration
